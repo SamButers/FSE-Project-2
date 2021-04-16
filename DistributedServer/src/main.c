@@ -1,42 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <arpa/inet.h>
 #include <unistd.h>
-
-#define SERVER_IP "192.168.0.52"
-#define SERVER_PORT 10030
-
-int clientSocket;
+#include "bme280.h"
+#include "i2c.h"
 
 int main() {
-	int attempts = 0;
-	struct sockaddr_in serverAddr;
+	BMEData data;
 	
-	if((clientSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		printf("Socket initialization error.\n");
+	int bme280 = bme280Init(1, 0x76);
+	if(bme280) {
+		printf("BME280 device initialization error.\n");
 		return 0;
 	}
 	
-	memset(&serverAddr, 0, sizeof(serverAddr));
-	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_addr.s_addr = inet_addr(SERVER_IP);
-	serverAddr.sin_port = htons(SERVER_PORT);
-
-	while(1) {
-		if(attempts > 5) {
-			printf("Socket connection error.\n");
-			return 0;
-		}
+	for(int c = 0; c < 5; c++) {
+		getBMEData(&data);
 		
-		if(connect(clientSocket, (struct sockaddr*) &serverAddr, sizeof(serverAddr)))
-			break;
-			
+		printf("Temperature: %f\n", data.temperature);
+		printf("Humidity: %f\n\n", data.humidity);
+		
 		sleep(1);
 	}
 	
-	close(clientSocket);
+	bme280Close();
 	
 	return 0;
 }
