@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define SERVER_IP "127.0.0.1"
+#define SERVER_IP "192.168.0.52"
 #define SERVER_PORT 10030
 
 int clientSocket;
@@ -14,7 +14,7 @@ int main() {
 	int attempts = 0;
 	struct sockaddr_in serverAddr;
 	
-	if((clienteSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+	if((clientSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		printf("Socket initialization error.\n");
 		return 0;
 	}

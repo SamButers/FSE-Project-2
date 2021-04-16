@@ -1,4 +1,4 @@
-PROJECT_NAME=distributed_server
+PROJECT_NAME=central_server
 
 C_SRC=$(wildcard src/*.c)
 
@@ -16,7 +16,7 @@ clean:
 	rm -rf obj/*.o *.bin
 
 $(PROJECT_NAME): $(OBJ)
-	$(CC) -o $@.bin $^ -lwiringPi
+	$(CC) -o $@.bin $^ -lncurses -lwiringPi
 
 obj/%.o: src/%.c inc/%.h
 	$(CC) -o $@ $< $(CC_FLAGS)
