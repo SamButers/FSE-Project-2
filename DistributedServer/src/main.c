@@ -4,10 +4,13 @@
 #include "bme280.h"
 #include "i2c.h"
 #include "io.h"
+#include "socket.h"
 
 int bme280;
 
 int initDevices() {
+	int error;
+	
 	bme280 = bme280Init(1, 0x76);
 	if(bme280) {
 		printf("BME280 device initialization error.\n");
@@ -19,11 +22,17 @@ int initDevices() {
 		return 1;
 	}
 	
+	if((error = initClient())) {
+		printf("Client socket initialization error #%d\n", error);
+		return 1;
+	}
+	
 	return 0;
 }
 
 void joinDevices() {
 	bme280Close();
+	joinClient();
 }
 
 int main() {

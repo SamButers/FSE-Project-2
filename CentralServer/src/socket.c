@@ -70,6 +70,8 @@ void* connectionHandler(void *args) {
 	while((receivedBytes = recv(*incomingSocket, buffer, 32, 0)) > 0) {
 		if(send(*incomingSocket, buffer, receivedBytes, 0) != receivedBytes)
 			printf("Send error\n");
+			
+		printf("%s\n", buffer);
 	}
 	
 	close(*incomingSocket);

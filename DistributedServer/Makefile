@@ -8,7 +8,7 @@ OBJ=$(subst .c,.o,$(subst src,obj,$(C_SRC)))
 
 CC=gcc
 
-CC_FLAGS = -Wall -c -O2 -static -I inc -pthread
+CC_FLAGS = -Wall -c -O2 -static -I inc
 
 all: $(PROJECT_NAME)
 
@@ -16,7 +16,7 @@ clean:
 	rm -rf obj/*.o *.bin
 
 $(PROJECT_NAME): $(OBJ)
-	$(CC) -o $@.bin $^ -lwiringPi
+	$(CC) -o $@.bin $^ -lwiringPi -pthread
 
 obj/%.o: src/%.c inc/%.h
 	$(CC) -o $@ $< $(CC_FLAGS)
