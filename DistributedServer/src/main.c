@@ -45,6 +45,10 @@ int main() {
 	getPinValues(IOPins);
 	for(int c = 0; c < INPUT_PINS_NUM; c++)
 		printf("PIN %d: %d\n", INPUT_PINS[c], IOPins[c]);
+		
+	setIOInterruptions();
+	while(1)
+		sleep(1);
 	
 	joinDevices();
 	

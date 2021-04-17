@@ -12,5 +12,6 @@
 
 void initClient(int *socket);
 int initServer();
+void sendPinUpdate(int pin, int value);
 
 #endif

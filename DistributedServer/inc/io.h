@@ -2,6 +2,7 @@
 #define IO_H_
 
 #include <wiringPi.h>
+#include "interruptions.h"
 
 #define INPUT_PINS_NUM 8
 #define OUTPUT_PINS_NUM 6
@@ -12,5 +13,6 @@ extern int OUTPUT_PINS[OUTPUT_PINS_NUM];
 int initIO();
 void joinIO();
 void getPinValues(int *pins);
+void setIOInterruptions();
 
 #endif
