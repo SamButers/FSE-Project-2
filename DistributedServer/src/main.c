@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
+#include <signal.h>
 #include "bme280.h"
 #include "i2c.h"
 #include "io.h"
@@ -10,6 +12,7 @@ int bme280;
 
 int initDevices() {
 	int error;
+	int attempts = 0;
 	
 	bme280 = bme280Init(1, 0x76);
 	if(bme280) {
@@ -22,8 +25,26 @@ int initDevices() {
 		return 1;
 	}
 	
-	if((error = initClient())) {
-		printf("Client socket initialization error #%d\n", error);
+	setIOInterruptions();
+	
+	while(1) {
+		error = initClient();
+		
+		if(error)
+			attempts++;
+		else
+			break;
+		
+		if(attempts >= 5) {
+			printf("Client socket initialization error #%d\n", error);
+			printf("%s\n", errno);
+			return 1;
+		}
+	}
+	
+	if((error = initServer())) {
+		printf("Server socket initialization error #%d\n", strerror(error));
+		printf("%s\n", strerror(errno));
 		return 1;
 	}
 	
@@ -33,33 +54,41 @@ int initDevices() {
 void joinDevices() {
 	bme280Close();
 	joinClient();
+	joinServer();
+}
+
+void gracefullyStop(int sig) {	
+	joinDevices();
+	
+	exit(0);
+}
+
+void mainLoop() {
+	BMEData data;
+	sigset_t sigSet;
+	struct timespec waitTimeout = {0, 900000000};
+	sigaddset(&sigSet, SIGALRM);
+	
+	while(1) {
+		alarm(1);
+		
+		getBMEData(&data);
+		sendBMEData(data.temperature, data.humidity);
+		
+		sigtimedwait(&sigSet, NULL, &waitTimeout);
+	}
 }
 
 int main() {
+	signal(SIGINT, gracefullyStop);
+	
 	BMEData data;
-	int IOPins[INPUT_PINS_NUM];
+	unsigned char IOPins[INPUT_PINS_NUM * sizeof(int)];
 	
 	if(initDevices())
 		return 0;
 	
-	for(int c = 0; c < 5; c++) {
-		getBMEData(&data);
-		
-		printf("Temperature: %f\n", data.temperature);
-		printf("Humidity: %f\n\n", data.humidity);
-		
-		sleep(1);
-	}
-	
-	getPinValues(IOPins);
-	for(int c = 0; c < INPUT_PINS_NUM; c++)
-		printf("PIN %d: %d\n", INPUT_PINS[c], IOPins[c]);
-		
-	setIOInterruptions();
-	while(1)
-		sleep(1);
-	
-	joinDevices();
+	mainLoop();
 	
 	return 0;
 }

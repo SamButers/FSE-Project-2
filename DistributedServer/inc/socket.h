@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <pthread.h>
+#include <stdlib.h>
+#include "io.h"
 
 #include <stdio.h>
 
@@ -16,6 +18,7 @@
 
 extern int clientSocket;
 extern int serverSocket;
+extern int incomingSocket;
 extern pthread_t serverThread;
 
 int initClient();
@@ -23,6 +26,7 @@ int initServer();
 void joinClient();
 void joinServer();
 void sendPinUpdate(int pin, int value);
+void sendBMEData(float temperature, float humidity);
 void* connectionHandler(void *args);
 
 #endif
