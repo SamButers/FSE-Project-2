@@ -29,5 +29,6 @@ void joinServer();
 void sendPinUpdate(int pin, int value);
 void sendBMEData();
 void* connectionHandler(void *args);
+void testSocket();
 
 #endif

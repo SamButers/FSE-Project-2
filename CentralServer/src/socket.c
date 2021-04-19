@@ -58,6 +58,12 @@ int initServer() {
 	if((incomingSocket = accept(serverSocket, (struct sockaddr*) &clientAddress, &clientSize)) < 0)
 		return 4;
 	
+	int PIN_BYTES = INPUT_PINS_NUM * 4;
+	unsigned char *buffer = malloc(PIN_BYTES);
+	
+	recv(incomingSocket, buffer, PIN_BYTES, 0);
+	setInitialPins(buffer);
+	
 	pthread_create(&serverThread, NULL, &connectionHandler, NULL);
 	return 0;
 }
@@ -72,6 +78,10 @@ void* connectionHandler(void *args) {
 	int value;
 	
 	while((receivedBytes = recv(incomingSocket, buffer, 8, 0)) > 0) {
+		if(receivedBytes == 3) {
+			printf("%s", buffer);
+			continue;
+		}
 		memcpy((void*) &pin, (void*) buffer, 4);
 		memcpy((void*) &value, (void*) (buffer + 4), 4);
 		

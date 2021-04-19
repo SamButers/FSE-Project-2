@@ -12,5 +12,6 @@ void pin12Interruption();
 void pin16Interruption();
 void pin20Interruption();
 void pin21Interruption();
+void generalInterruption(int pin);
 
 #endif

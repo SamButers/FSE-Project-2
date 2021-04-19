@@ -50,3 +50,10 @@ int getIndexFromPin(int pin) {
 void updatePin(int pin, int value) {
 	INPUT_PINS[getIndexFromPin(pin)] = value;
 }
+
+void setInitialPins(unsigned char *pins) {
+	for(int c = 0; c < INPUT_PINS_NUM; c++) {
+		memcpy((void*) (INPUT_PINS + c), (void*) pins, 4);
+		pins += 4;
+	}
+}

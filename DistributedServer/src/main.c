@@ -24,8 +24,6 @@ int initDevices() {
 		return 1;
 	}
 	
-	setIOInterruptions();
-	
 	/*if((error = initServer())) {
 		printf("Server socket initialization error #%d\n", strerror(error));
 		printf("%s\n", strerror(errno));
@@ -48,6 +46,8 @@ int initDevices() {
 		
 		sleep(1);
 	}
+	
+	setIOInterruptions();
 	
 	return 0;
 }
@@ -90,8 +90,9 @@ int main() {
 	if(initDevices())
 		return 0;
 	
-	while(1)
-		pause();
+	while(1) {
+		sleep(1);
+	}
 	
 	return 0;
 }

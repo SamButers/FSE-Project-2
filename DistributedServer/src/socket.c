@@ -8,8 +8,6 @@ pthread_t serverThread;
 
 int initClient() {
 	struct sockaddr_in serverAddress;
-	unsigned int messageSize;
-	char buffer[] = "0";
 	
 	if((clientSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
 		return 1;
@@ -22,9 +20,15 @@ int initClient() {
 	if(connect(clientSocket, (struct sockaddr*) &serverAddress, sizeof(serverAddress)) < 0)
 		return 2;
 		
-	messageSize = strlen(buffer);
-	if(send(clientSocket, buffer, messageSize, 0) != messageSize)
+	int PIN_BYTES = INPUT_PINS_NUM * 4;
+	unsigned char *buffer = malloc(PIN_BYTES);
+	getPinValues(buffer);
+	
+	if(send(clientSocket, buffer, PIN_BYTES, 0) != PIN_BYTES)
 		return 3;
+	
+	printf("CLient: %d\n", clientSocket);
+	
 	return 0;
 }
 
@@ -51,22 +55,17 @@ int initServer() {
 	if((incomingSocket = accept(serverSocket, (struct sockaddr*) &clientAddress, &clientSize)) < 0)
 		return 4;
 	
-	int PIN_BYTES = INPUT_PINS_NUM * 4;
-	unsigned char *buffer = malloc(PIN_BYTES);
-	getPinValues(buffer);
-	
-	if(send(incomingSocket, buffer, PIN_BYTES, 0) != PIN_BYTES)
-		return 5;
-	
-	free(buffer);
-	
 	pthread_create(&serverThread, NULL, &connectionHandler, NULL);
 	return 0;
 }
 
 void sendPinUpdate(int pin, int value) {
+	char buffer[8];
+	
+	memcpy((void*) buffer, (void*) &pin, 4);
+	memcpy((void*) (buffer + 4), (void*) &value, 4);
+	send(clientSocket, buffer, 8, 0);
 	printf("Pin Update %d: %d\n", pin, value);
-	return;
 }
 
 void* connectionHandler(void *args) {
@@ -115,4 +114,9 @@ void joinServer() {
 	pthread_cancel(serverThread);
 	close(serverSocket);
 	close(incomingSocket);
+}
+
+void testSocket() {
+	char test = 'Y';
+	send(clientSocket, &test, 1, 0);
 }

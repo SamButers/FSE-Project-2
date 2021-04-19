@@ -17,13 +17,13 @@ int initIO() {
 }
 
 void getPinValues(unsigned char *buffer) {
-	const int INT_SIZE = 4;
 	int value;
 	
 	for(int c = 0; c < INPUT_PINS_NUM; c++) {
 		value = digitalRead(INPUT_PINS[c]);
-		memcpy((void*) buffer, &value, INT_SIZE);
-		buffer += INT_SIZE;
+		memcpy((void*) buffer, &value, 4);
+		buffer += 4;
+		printf("Pin %d %d\n", INPUT_PINS[c], value);
 	}
 }
 
