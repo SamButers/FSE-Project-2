@@ -3,7 +3,7 @@
 int INPUT_PINS[INPUT_PINS_NUM];
 int OUTPUT_PINS[OUTPUT_PINS_NUM];
 
-int getPinFromIndex(int index) {
+int getInputPinFromIndex(int index) {
 	switch(index) {
 		case 0:
 			return 6;
@@ -25,7 +25,7 @@ int getPinFromIndex(int index) {
 	return -1;
 }
 
-int getIndexFromPin(int pin) {
+int getInputIndexFromPin(int pin) {
 	switch(pin) {
 		case 6:
 			return 0;
@@ -47,13 +47,58 @@ int getIndexFromPin(int pin) {
 	return -1;
 }
 
+int getOutputPinFromIndex(int index) {
+	switch(index) {
+		case 0:
+			return 23;
+		case 1:
+			return 0;
+		case 2:
+			return 1;
+		case 3:
+			return 24;
+		case 4:
+			return 3;
+		case 5:
+			return 2;
+	}
+	return -1;
+}
+
+int getOutputIndexFromPin(int pin) {
+	switch(pin) {
+		case 23:
+			return 0;
+		case 0:
+			return 1;
+		case 1:
+			return 2;
+		case 24:
+			return 3;
+		case 3:
+			return 4;
+		case 2:
+			return 5;
+	}
+	return -1;
+}
+
 void updatePin(int pin, int value) {
-	INPUT_PINS[getIndexFromPin(pin)] = value;
+	INPUT_PINS[getInputIndexFromPin(pin)] = value;
+	if(ALARM && value)
+		soundAlarm();
 }
 
 void setInitialPins(unsigned char *pins) {
-	for(int c = 0; c < INPUT_PINS_NUM; c++) {
+	int c;
+	
+	for(c = 0; c < INPUT_PINS_NUM; c++) {
 		memcpy((void*) (INPUT_PINS + c), (void*) pins, 4);
+		pins += 4;
+	}
+	
+	for(c = 0; c < OUTPUT_PINS_NUM; c++) {
+		memcpy((void*) (OUTPUT_PINS + c), (void*) pins, 4);
 		pins += 4;
 	}
 }

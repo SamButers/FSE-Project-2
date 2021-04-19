@@ -6,13 +6,14 @@
 #include <ncurses.h>
 #include "socket.h"
 #include "pin.h"
+#include "alarm.h"
 
 int ALARM;
 
 int initDevices() {
 	int error, attempts = 0;
 
-	/*while(1) {
+	while(1) {
 		error = initClient();
 		
 		if(error)
@@ -22,12 +23,12 @@ int initDevices() {
 		
 		if(attempts >= 5) {
 			printf("Client socket initialization error #%d\n", error);
-			printf("%s\n", errno);
+			printf("%s\n", strerror(errno));
 			return 1;
 		}
 		
 		sleep(1);
-	}*/
+	}
 	
 	if((error = initServer())) {
 		printf("Server socket initialization error #%d\n", error);
@@ -38,8 +39,6 @@ int initDevices() {
 	initscr();
 	noecho();
 	nodelay(stdscr, 1);
-	
-	ALARM = 0;
 	
 	return 0;
 }
@@ -55,12 +54,12 @@ int checkInput() {
 	}
 }
 
-void displayInformation() {
+void displayInformation(BMEData *bmeData) {
 	clear();
 	
 	printw("================-BME Data-================\n");
-	printw("Temperature: %f\n", 0);
-	printw("Humidity: %f\n", 0);
+	printw("Temperature: %f\n", bmeData->temperature);
+	printw("Humidity: %f\n", bmeData->humidity);
 	
 	printw("================-PIN Data-================\n");
 	printw("Sensor Abertura 01 (Porta Cozinha): %d\n", INPUT_PINS[0]);
@@ -70,7 +69,14 @@ void displayInformation() {
 	printw("Sensor Abertura 05 (Janela Quarto 01): %d\n", INPUT_PINS[4]);
 	printw("Sensor Abertura 06 (Janela Quarto 02): %d\n", INPUT_PINS[5]);
 	printw("Sensor de Presença 01 (Sala): %d\n", INPUT_PINS[6]);
-	printw("Sensor de Presença 02 (Cozinha): %d\n", INPUT_PINS[7]);
+	printw("Sensor de Presença 02 (Cozinha): %d\n\n", INPUT_PINS[7]);
+	
+	printw("Ar-Condicionado 01 (Quarto 01)\n", OUTPUT_PINS[0]);
+	printw("Ar-Condicionado 02 (Quarto 02)\n", OUTPUT_PINS[3]);
+	printw("Lâmpada 01 (Cozinha)\n", OUTPUT_PINS[1]);
+	printw("Lâmpada 02 (Sala)\n", OUTPUT_PINS[2]);
+	printw("Lâmpada 03 (Quarto 01)\n", OUTPUT_PINS[5]);
+	printw("Lâmpada 04 (Quarto 02)\n", OUTPUT_PINS[4]);
 	
 	printw("=================-ALARM-=================\n");
 	printw("Alarm: %d\n", ALARM);
@@ -94,10 +100,11 @@ void handleUserAction(int action) {
 			
 			int action = getch();
 			
-			//toggleOutputPin(getPinFromIndex(action - 49));
+			int index = action - 49;
+			OUTPUT_PINS[index] = sendPinUpdate(getOutputPinFromIndex(index));
 			break;
 		case 50:
-			ALARM = !ALARM;
+			toggleAlarm();
 			
 		default:
 			return;
@@ -131,11 +138,9 @@ void mainLoop() {
 			continue;
 		}
 		
-		displayInformation();
-		
-		/*for(int c = 0; c < INPUT_PINS_NUM; c++)
-			printf("Pin %d:%d\n", getPinFromIndex(c), INPUT_PINS[c]);
-		printf("\n");*/
+		getBMEData(&bmeData);
+		displayInformation(&bmeData);
+
 		sleep(1);
 	}
 }

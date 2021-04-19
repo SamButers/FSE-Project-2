@@ -20,7 +20,7 @@ int initClient() {
 	if(connect(clientSocket, (struct sockaddr*) &serverAddress, sizeof(serverAddress)) < 0)
 		return 2;
 		
-	int PIN_BYTES = INPUT_PINS_NUM * 4;
+	int PIN_BYTES = (INPUT_PINS_NUM + OUTPUT_PINS_NUM) * 4;
 	unsigned char *buffer = malloc(PIN_BYTES);
 	getPinValues(buffer);
 	
@@ -80,13 +80,12 @@ void* connectionHandler(void *args) {
 	BMEData data;
 	
 	while((receivedBytes = recv(incomingSocket, buffer, 8, 0)) > 0) {
-		if(receivedBytes == 8) {
+		if(receivedBytes == 4) {
 			memcpy((void*) &pin, (void*) buffer, 4);
-			memcpy((void*) &value, (void*) (buffer + 4), 4);
 			
-			setPinValue(pin, value);
+			togglePinValue(pin);
 			value = getPinValue(pin);
-			memcpy((void*) buffer, (void*) value, 4);
+			memcpy((void*) buffer, (void*) &value, 4);
 			
 			if(send(incomingSocket, buffer, 4, 0) != 4)
 				printf("Send error\n");

@@ -17,13 +17,20 @@ int initIO() {
 }
 
 void getPinValues(unsigned char *buffer) {
-	int value;
+	int value, c;
 	
-	for(int c = 0; c < INPUT_PINS_NUM; c++) {
+	for(c = 0; c < INPUT_PINS_NUM; c++) {
 		value = digitalRead(INPUT_PINS[c]);
 		memcpy((void*) buffer, &value, 4);
 		buffer += 4;
 		printf("Pin %d %d\n", INPUT_PINS[c], value);
+	}
+	
+	for(c = 0; c < OUTPUT_PINS_NUM; c++) {
+		value = digitalRead(OUTPUT_PINS[c]);
+		memcpy((void*) buffer, &value, 4);
+		buffer += 4;
+		printf("Pin %d %d\n", OUTPUT_PINS[c], value);
 	}
 }
 
@@ -38,8 +45,9 @@ void setIOInterruptions() {
 	wiringPiISR(29, INT_EDGE_BOTH, &pin21Interruption);
 }
 
-void setPinValue(int pin, int value) {
-	digitalWrite(pin, value);
+void togglePinValue(int pin) {
+	int value = digitalRead(pin);
+	digitalWrite(pin, !value);
 }
 
 int getPinValue(int pin) {

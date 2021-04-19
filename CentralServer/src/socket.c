@@ -19,19 +19,6 @@ int initClient() {
 	if(connect(clientSocket, (struct sockaddr*) &serverAddress, sizeof(serverAddress)) < 0)
 		return 2;
 		
-	int PIN_BYTES = INPUT_PINS_NUM * 4;
-	unsigned char *buffer = malloc(PIN_BYTES);
-		
-	if(recv(clientSocket, buffer, PIN_BYTES, 0) == PIN_BYTES) {
-		for(int c = 0; c < INPUT_PINS_NUM; c++)
-			memcpy((void*) (INPUT_PINS + c), (void*) (buffer + (4 * c)), 4);
-	}
-	
-	else
-		return 3;
-	
-	free(buffer);
-		
 	return 0;
 }
 
@@ -58,7 +45,7 @@ int initServer() {
 	if((incomingSocket = accept(serverSocket, (struct sockaddr*) &clientAddress, &clientSize)) < 0)
 		return 4;
 	
-	int PIN_BYTES = INPUT_PINS_NUM * 4;
+	int PIN_BYTES = (INPUT_PINS_NUM + OUTPUT_PINS_NUM) * 4;
 	unsigned char *buffer = malloc(PIN_BYTES);
 	
 	recv(incomingSocket, buffer, PIN_BYTES, 0);
@@ -99,4 +86,28 @@ void joinServer() {
 	pthread_cancel(serverThread);
 	close(serverSocket);
 	close(incomingSocket);
+}
+
+int sendPinUpdate(int pin) {
+	int value;
+	
+	send(clientSocket, &pin, 4, 0);
+	if(recv(clientSocket, &value, 4, 0) == 4)
+		return value;
+	return -1;
+}
+
+void getBMEData(BMEData *data) {
+	char buffer[8] = "0";
+	
+	send(clientSocket, buffer, 1, 0);
+	if(recv(clientSocket, buffer, 8, 0) == 8) {
+		memcpy((void*) &(data->temperature), (void*) buffer, 4);
+		memcpy((void*) &(data->humidity), (void*) (buffer + 4), 4);
+	}
+	
+	else {
+		data->temperature = -1;
+		data->humidity = -1;
+	}
 }

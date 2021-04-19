@@ -16,6 +16,10 @@
 #define SERVER_PORT 10130
 #define PORT 10030
 
+typedef struct BMEData {
+	float temperature, humidity;
+} BMEData;
+
 extern int clientSocket;
 extern int serverSocket;
 extern pthread_t serverThread;
@@ -24,7 +28,8 @@ int initClient();
 int initServer();
 void joinClient();
 void joinServer();
-void sendPinUpdate(int pin, int value);
+int sendPinUpdate(int pin);
+void getBMEData(BMEData *data);
 void* connectionHandler(void *args);
 
 #endif

@@ -24,11 +24,11 @@ int initDevices() {
 		return 1;
 	}
 	
-	/*if((error = initServer())) {
-		printf("Server socket initialization error #%d\n", strerror(error));
+	if((error = initServer())) {
+		printf("Server socket initialization error #%d\n", error);
 		printf("%s\n", strerror(errno));
 		return 1;
-	}*/
+	}
 	
 	while(1) {
 		error = initClient();
@@ -64,22 +64,6 @@ void gracefullyStop(int sig) {
 	exit(0);
 }
 
-/*void mainLoop() {
-	BMEData data;
-	sigset_t sigSet;
-	struct timespec waitTimeout = {0, 900000000};
-	sigaddset(&sigSet, SIGALRM);
-	
-	while(1) {
-		alarm(1);
-		
-		getBMEData(&data);
-		sendBMEData(data.temperature, data.humidity);
-		
-		sigtimedwait(&sigSet, NULL, &waitTimeout);
-	}
-}*/
-
 /**
 Server will handle BME data sending and outpin setting.
 Client will send pin updates.
@@ -90,9 +74,8 @@ int main() {
 	if(initDevices())
 		return 0;
 	
-	while(1) {
-		sleep(1);
-	}
+	while(1)
+		pause();
 	
 	return 0;
 }

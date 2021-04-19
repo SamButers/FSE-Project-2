@@ -15,7 +15,7 @@ extern int OUTPUT_PINS[OUTPUT_PINS_NUM];
 int initIO();
 void joinIO();
 void getPinValues(unsigned char *buffer);
-void setPinValue(int pin, int value);
+void togglePinValue(int pin);
 int getPinValue(int pin);
 void setIOInterruptions();
 
