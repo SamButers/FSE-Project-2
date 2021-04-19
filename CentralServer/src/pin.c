@@ -85,8 +85,10 @@ int getOutputIndexFromPin(int pin) {
 
 void updatePin(int pin, int value) {
 	INPUT_PINS[getInputIndexFromPin(pin)] = value;
-	if(ALARM && value)
+	if(ALARM && value) {
 		soundAlarm();
+		registerAlarmEvent(pin);
+	}
 }
 
 void setInitialPins(unsigned char *pins) {

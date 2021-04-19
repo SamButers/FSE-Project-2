@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include "alarm.h"
+#include "csv.h"
 
 #define INPUT_PINS_NUM 8
 #define OUTPUT_PINS_NUM 6

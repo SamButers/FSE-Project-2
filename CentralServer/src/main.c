@@ -4,9 +4,11 @@
 #include <string.h>
 #include <errno.h>
 #include <ncurses.h>
+#include <signal.h>
 #include "socket.h"
 #include "pin.h"
 #include "alarm.h"
+#include "csv.h"
 
 int ALARM;
 
@@ -33,6 +35,11 @@ int initDevices() {
 	if((error = initServer())) {
 		printf("Server socket initialization error #%d\n", error);
 		printf("%s\n", strerror(errno));
+		return 1;
+	}
+	
+	if(startCSV()) {
+		printf("CSV initialization error.\n");
 		return 1;
 	}
 	
@@ -101,10 +108,14 @@ void handleUserAction(int action) {
 			int action = getch();
 			
 			int index = action - 49;
-			OUTPUT_PINS[index] = sendPinUpdate(getOutputPinFromIndex(index));
+			int outputPin = getOutputPinFromIndex(index);
+			OUTPUT_PINS[index] = sendPinUpdate(outputPin);
+			registerUserEvent(outputPin, OUTPUT_PINS[index]);
+			
 			break;
 		case 50:
 			toggleAlarm();
+			registerUserEvent(ALARM_TOGGLE, ALARM);
 			
 		default:
 			return;
@@ -129,7 +140,22 @@ void handleUserInput() {
 	nodelay(stdscr, 1);
 }
 
+void joinDevices() {
+	joinClient();
+	joinServer();
+	closeCSV();
+}
+
+void gracefullyStop(int sig) {	
+	endwin();
+	joinDevices();
+	
+	exit(0);
+}
+
 void mainLoop() {
+	signal(SIGINT, gracefullyStop);
+	
 	BMEData bmeData;
 	
 	while(1) {
