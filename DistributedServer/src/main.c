@@ -11,8 +11,7 @@
 int bme280;
 
 int initDevices() {
-	int error;
-	int attempts = 0;
+	int error, attempts = 0;
 	
 	bme280 = bme280Init(1, 0x76);
 	if(bme280) {
@@ -27,6 +26,12 @@ int initDevices() {
 	
 	setIOInterruptions();
 	
+	/*if((error = initServer())) {
+		printf("Server socket initialization error #%d\n", strerror(error));
+		printf("%s\n", strerror(errno));
+		return 1;
+	}*/
+	
 	while(1) {
 		error = initClient();
 		
@@ -37,15 +42,11 @@ int initDevices() {
 		
 		if(attempts >= 5) {
 			printf("Client socket initialization error #%d\n", error);
-			printf("%s\n", errno);
+			printf("%s\n", strerror(errno));
 			return 1;
 		}
-	}
-	
-	if((error = initServer())) {
-		printf("Server socket initialization error #%d\n", strerror(error));
-		printf("%s\n", strerror(errno));
-		return 1;
+		
+		sleep(1);
 	}
 	
 	return 0;
@@ -63,7 +64,7 @@ void gracefullyStop(int sig) {
 	exit(0);
 }
 
-void mainLoop() {
+/*void mainLoop() {
 	BMEData data;
 	sigset_t sigSet;
 	struct timespec waitTimeout = {0, 900000000};
@@ -77,18 +78,20 @@ void mainLoop() {
 		
 		sigtimedwait(&sigSet, NULL, &waitTimeout);
 	}
-}
+}*/
 
+/**
+Server will handle BME data sending and outpin setting.
+Client will send pin updates.
+**/
 int main() {
 	signal(SIGINT, gracefullyStop);
-	
-	BMEData data;
-	unsigned char IOPins[INPUT_PINS_NUM * sizeof(int)];
 	
 	if(initDevices())
 		return 0;
 	
-	mainLoop();
+	while(1)
+		pause();
 	
 	return 0;
 }

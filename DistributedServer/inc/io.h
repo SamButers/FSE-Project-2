@@ -15,6 +15,7 @@ int initIO();
 void joinIO();
 void getPinValues(unsigned char *buffer);
 void setPinValue(int pin, int value);
+int getPinValue(int pin);
 void setIOInterruptions();
 
 #endif

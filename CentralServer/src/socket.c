@@ -1,15 +1,13 @@
 #include "socket.h"
-#include <stdio.h>
 
 int clientSocket;
 int serverSocket;
+int incomingSocket;
 pthread_t serverThread;
 
 int initClient() {
 	struct sockaddr_in serverAddress;
-	unsigned int messageSize;
-	char buffer[] = "0";
-	
+
 	if((clientSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
 		return 1;
 		
@@ -21,9 +19,19 @@ int initClient() {
 	if(connect(clientSocket, (struct sockaddr*) &serverAddress, sizeof(serverAddress)) < 0)
 		return 2;
 		
-	messageSize = strlen(buffer);
-	if(send(clientSocket, buffer, messageSize, 0) != messageSize)
+	int PIN_BYTES = INPUT_PINS_NUM * 4;
+	unsigned char *buffer = malloc(PIN_BYTES);
+		
+	if(recv(clientSocket, buffer, PIN_BYTES, 0) == PIN_BYTES) {
+		for(int c = 0; c < INPUT_PINS_NUM; c++)
+			memcpy((void*) (INPUT_PINS + c), (void*) (buffer + (4 * c)), 4);
+	}
+	
+	else
 		return 3;
+	
+	free(buffer);
+		
 	return 0;
 }
 
@@ -31,7 +39,6 @@ int initServer() {
 	struct sockaddr_in serverAddress;
 	struct sockaddr_in clientAddress;
 	unsigned int clientSize;
-	int incomingSocket;
 	
 	if((serverSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
 		return 1;
@@ -50,31 +57,27 @@ int initServer() {
 	clientSize = sizeof(clientAddress);
 	if((incomingSocket = accept(serverSocket, (struct sockaddr*) &clientAddress, &clientSize)) < 0)
 		return 4;
-		
-	pthread_create(&serverThread, NULL, &connectionHandler, (void*) &incomingSocket);
+	
+	pthread_create(&serverThread, NULL, &connectionHandler, NULL);
 	return 0;
-}
-
-void sendPinUpdate(int pin, int value) {
-	printf("Pin Update %d: %d\n", pin, value);
-	return;
 }
 
 void* connectionHandler(void *args) {
 	printf("Handler initialized\n");
-	int *incomingSocket = (int*) args;
 	
 	int receivedBytes;
-	char buffer[32];
+	char buffer[8];
 	
-	while((receivedBytes = recv(*incomingSocket, buffer, 32, 0)) > 0) {
-		if(send(*incomingSocket, buffer, receivedBytes, 0) != receivedBytes)
-			printf("Send error\n");
-			
-		printf("%s\n", buffer);
+	int pin;
+	int value;
+	
+	while((receivedBytes = recv(incomingSocket, buffer, 8, 0)) > 0) {
+		memcpy((void*) &pin, (void*) buffer, 4);
+		memcpy((void*) &value, (void*) (buffer + 4), 4);
+		
+		updatePin(pin, value);
 	}
 	
-	close(*incomingSocket);
 	return NULL;
 }
 
@@ -85,5 +88,5 @@ void joinClient() {
 void joinServer() {
 	pthread_cancel(serverThread);
 	close(serverSocket);
-	//close(incomingSocket);
+	close(incomingSocket);
 }

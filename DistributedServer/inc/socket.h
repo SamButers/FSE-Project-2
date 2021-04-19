@@ -9,6 +9,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include "io.h"
+#include "i2c.h"
 
 #include <stdio.h>
 
@@ -26,7 +27,7 @@ int initServer();
 void joinClient();
 void joinServer();
 void sendPinUpdate(int pin, int value);
-void sendBMEData(float temperature, float humidity);
+void sendBMEData();
 void* connectionHandler(void *args);
 
 #endif

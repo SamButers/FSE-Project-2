@@ -9,10 +9,12 @@
 #include <pthread.h>
 
 #include <stdio.h>
+#include <stdlib.h>
+#include "pin.h"
 
 #define SERVER_IP "192.168.0.53"
-#define SERVER_PORT 10030
-#define PORT 10130
+#define SERVER_PORT 10130
+#define PORT 10030
 
 extern int clientSocket;
 extern int serverSocket;

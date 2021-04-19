@@ -50,13 +50,15 @@ int initServer() {
 	clientSize = sizeof(clientAddress);
 	if((incomingSocket = accept(serverSocket, (struct sockaddr*) &clientAddress, &clientSize)) < 0)
 		return 4;
-		
-	unsigned char *buffer = malloc(INPUT_PINS_NUM * 4);
+	
+	int PIN_BYTES = INPUT_PINS_NUM * 4;
+	unsigned char *buffer = malloc(PIN_BYTES);
 	getPinValues(buffer);
 	
-	send(incomingSocket, buffer, INPUT_PINS_NUM * 4, 0);
-	if(recv(incomingSocket, buffer, 1, 0) <= 0 || buffer[0] != '1')
+	if(send(incomingSocket, buffer, PIN_BYTES, 0) != PIN_BYTES)
 		return 5;
+	
+	free(buffer);
 	
 	pthread_create(&serverThread, NULL, &connectionHandler, NULL);
 	return 0;
@@ -71,19 +73,35 @@ void* connectionHandler(void *args) {
 	printf("Handler initialized\n");
 	
 	int receivedBytes;
-	char buffer[2 * 4];
+	char buffer[8];
 	
 	int pin;
 	int value;
 	
-	while((receivedBytes = recv(incomingSocket, buffer, 3, 0)) > 0) {
-		memcpy((void*) &pin, (void*) buffer, 4);
-		memcpy((void*) &value, (void*) (buffer + 4), 4);
+	BMEData data;
+	
+	while((receivedBytes = recv(incomingSocket, buffer, 8, 0)) > 0) {
+		if(receivedBytes == 8) {
+			memcpy((void*) &pin, (void*) buffer, 4);
+			memcpy((void*) &value, (void*) (buffer + 4), 4);
+			
+			setPinValue(pin, value);
+			value = getPinValue(pin);
+			memcpy((void*) buffer, (void*) value, 4);
+			
+			if(send(incomingSocket, buffer, 4, 0) != 4)
+				printf("Send error\n");
+		}
 		
-		setPinValue(pin, value);
-		
-		if(send(incomingSocket, "1", 1, 0) != 1)
-			printf("Send error\n");
+		else {
+			getBMEData(&data);
+			
+			memcpy((void*) buffer, (void*) &(data.temperature), 4);
+			memcpy((void*) (buffer + 4), (void*) &(data.humidity), 4);
+			
+			if(send(incomingSocket, buffer, 8, 0) != 8)
+				printf("Send error\n");
+		}
 	}
 	
 	return NULL;

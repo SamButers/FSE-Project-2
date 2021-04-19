@@ -4,28 +4,13 @@
 #include <wiringPi.h>
 #include "socket.h"
 
-void pin25RisingInterruption();
-void pin25FallingInterruption();
-
-void pin26RisingInterruption();
-void pin26FallingInterruption();
-
-void pin05RisingInterruption();
-void pin05FallingInterruption();
-
-void pin06RisingInterruption();
-void pin06FallingInterruption();
-
-void pin12RisingInterruption();
-void pin12FallingInterruption();
-
-void pin16RisingInterruption();
-void pin16FallingInterruption();
-
-void pin20RisingInterruption();
-void pin20FallingInterruption();
-
-void pin21RisingInterruption();
-void pin21FallingInterruption();
+void pin25Interruption();
+void pin26Interruption();
+void pin05Interruption();
+void pin06Interruption();
+void pin12Interruption();
+void pin16Interruption();
+void pin20Interruption();
+void pin21Interruption();
 
 #endif

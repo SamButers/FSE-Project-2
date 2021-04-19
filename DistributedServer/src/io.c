@@ -16,11 +16,6 @@ int initIO() {
 	return 0;
 }
 
-/*void getPinValues(int *pins) {
-	for(int c = 0; c < INPUT_PINS_NUM; c++)
-		pins[c] = digitalRead(INPUT_PINS[c]);
-}*/
-
 void getPinValues(unsigned char *buffer) {
 	const int INT_SIZE = 4;
 	int value;
@@ -45,4 +40,8 @@ void setIOInterruptions() {
 
 void setPinValue(int pin, int value) {
 	digitalWrite(pin, value);
+}
+
+int getPinValue(int pin) {
+	return digitalRead(pin);
 }
