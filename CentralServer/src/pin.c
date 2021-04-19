@@ -6,42 +6,42 @@ int OUTPUT_PINS[OUTPUT_PINS_NUM];
 int getInputPinFromIndex(int index) {
 	switch(index) {
 		case 0:
-			return 6;
-		case 1:
-			return 25;
-		case 2:
 			return 21;
-		case 3:
+		case 1:
 			return 22;
-		case 4:
+		case 2:
 			return 26;
-		case 5:
+		case 3:
 			return 27;
-		case 6:
+		case 4:
 			return 28;
-		case 7:
+		case 5:
 			return 29;
+		case 6:
+			return 6;
+		case 7:
+			return 25;
 	}
 	return -1;
 }
 
 int getInputIndexFromPin(int pin) {
 	switch(pin) {
-		case 6:
-			return 0;
-		case 25:
-			return 1;
 		case 21:
-			return 2;
+			return 0;
 		case 22:
-			return 3;
+			return 1;
 		case 26:
-			return 4;
+			return 2;
 		case 27:
-			return 5;
+			return 3;
 		case 28:
-			return 6;
+			return 4;
 		case 29:
+			return 5;
+		case 6:
+			return 6;
+		case 25:
 			return 7;
 	}
 	return -1;

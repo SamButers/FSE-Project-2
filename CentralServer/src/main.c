@@ -71,12 +71,12 @@ void displayInformation(BMEData *bmeData) {
 	printw("Sensor de Presença 01 (Sala): %d\n", INPUT_PINS[6]);
 	printw("Sensor de Presença 02 (Cozinha): %d\n\n", INPUT_PINS[7]);
 	
-	printw("Ar-Condicionado 01 (Quarto 01)\n", OUTPUT_PINS[0]);
-	printw("Ar-Condicionado 02 (Quarto 02)\n", OUTPUT_PINS[3]);
-	printw("Lâmpada 01 (Cozinha)\n", OUTPUT_PINS[1]);
-	printw("Lâmpada 02 (Sala)\n", OUTPUT_PINS[2]);
-	printw("Lâmpada 03 (Quarto 01)\n", OUTPUT_PINS[5]);
-	printw("Lâmpada 04 (Quarto 02)\n", OUTPUT_PINS[4]);
+	printw("Ar-Condicionado 01 (Quarto 01): %d\n", OUTPUT_PINS[0]);
+	printw("Ar-Condicionado 02 (Quarto 02): %d\n", OUTPUT_PINS[3]);
+	printw("Lâmpada 01 (Cozinha): %d\n", OUTPUT_PINS[1]);
+	printw("Lâmpada 02 (Sala): %d\n", OUTPUT_PINS[2]);
+	printw("Lâmpada 03 (Quarto 01): %d\n", OUTPUT_PINS[5]);
+	printw("Lâmpada 04 (Quarto 02): %d\n", OUTPUT_PINS[4]);
 	
 	printw("=================-ALARM-=================\n");
 	printw("Alarm: %d\n", ALARM);
@@ -91,12 +91,12 @@ void handleUserAction(int action) {
 	switch(action) {
 		case 49:
 			printw("=================-DEVICE-=================\n");
-			printw("1. Lâmpada 01 (Cozinha)\n");
-			printw("2. Lâmpada 02 (Sala)\n");
-			printw("3. Lâmpada 03 (Quarto 01)\n");
-			printw("4. Lâmpada 04 (Quarto 02)\n");
-			printw("5. Ar-Condicionado 01 (Quarto 01)\n");
-			printw("6. Ar-Condicionado 02 (Quarto 02)\n");
+			printw("1. Ar-Condicionado 01 (Quarto 01)\n");
+			printw("2. Lâmpada 01 (Cozinha)\n");
+			printw("3. Lâmpada 02 (Sala)\n");
+			printw("4. Ar-Condicionado 02 (Quarto 02)\n");
+			printw("5. Lâmpada 04 (Quarto 02)\n");
+			printw("6. Lâmpada 03 (Quarto 01)\n");
 			
 			int action = getch();
 			

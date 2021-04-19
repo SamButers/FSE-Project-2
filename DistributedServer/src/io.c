@@ -1,6 +1,6 @@
 #include "io.h"
 
-int INPUT_PINS[INPUT_PINS_NUM] = {6, 25, 21, 22, 26, 27, 28, 29};
+int INPUT_PINS[INPUT_PINS_NUM] = {21, 22, 26, 27, 28, 29, 6, 25};
 int OUTPUT_PINS[OUTPUT_PINS_NUM] = {23, 0, 1, 24, 3, 2};
 
 int initIO() {
