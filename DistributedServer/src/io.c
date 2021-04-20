@@ -23,14 +23,12 @@ void getPinValues(unsigned char *buffer) {
 		value = digitalRead(INPUT_PINS[c]);
 		memcpy((void*) buffer, &value, 4);
 		buffer += 4;
-		printf("Pin %d %d\n", INPUT_PINS[c], value);
 	}
 	
 	for(c = 0; c < OUTPUT_PINS_NUM; c++) {
 		value = digitalRead(OUTPUT_PINS[c]);
 		memcpy((void*) buffer, &value, 4);
 		buffer += 4;
-		printf("Pin %d %d\n", OUTPUT_PINS[c], value);
 	}
 }
 

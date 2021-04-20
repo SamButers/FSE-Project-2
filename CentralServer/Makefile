@@ -10,7 +10,7 @@ CC=gcc
 
 CC_FLAGS = -Wall -c -O2 -static -I inc
 
-all: $(PROJECT_NAME)
+all: objFolder $(PROJECT_NAME)
 
 clean:
 	rm -rf obj/*.o *.bin
@@ -24,3 +24,5 @@ obj/%.o: src/%.c inc/%.h
 obj/main.o: src/main.c $(H_SRC)
 	$(CC) -o $@ $< $(CC_FLAGS)
 
+objFolder:
+	mkdir -p obj

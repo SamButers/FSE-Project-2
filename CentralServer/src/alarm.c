@@ -7,6 +7,5 @@ void toggleAlarm() {
 }
 
 void soundAlarm() {
-	system("omxplayer ./alarm.mp3");
-	printf("Alarm sounded.\n");
+	system("omxplayer ./alarm.mp3 > /dev/null");
 }

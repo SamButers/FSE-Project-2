@@ -1,5 +1,4 @@
 #include "socket.h"
-#include <stdio.h>
 
 int clientSocket;
 int serverSocket;
@@ -26,8 +25,6 @@ int initClient() {
 	
 	if(send(clientSocket, buffer, PIN_BYTES, 0) != PIN_BYTES)
 		return 3;
-	
-	printf("CLient: %d\n", clientSocket);
 	
 	return 0;
 }
@@ -65,12 +62,9 @@ void sendPinUpdate(int pin, int value) {
 	memcpy((void*) buffer, (void*) &pin, 4);
 	memcpy((void*) (buffer + 4), (void*) &value, 4);
 	send(clientSocket, buffer, 8, 0);
-	printf("Pin Update %d: %d\n", pin, value);
 }
 
 void* connectionHandler(void *args) {
-	printf("Handler initialized\n");
-	
 	int receivedBytes;
 	char buffer[8];
 	
@@ -87,8 +81,7 @@ void* connectionHandler(void *args) {
 			value = getPinValue(pin);
 			memcpy((void*) buffer, (void*) &value, 4);
 			
-			if(send(incomingSocket, buffer, 4, 0) != 4)
-				printf("Send error\n");
+			send(incomingSocket, buffer, 4, 0);
 		}
 		
 		else {
@@ -97,8 +90,7 @@ void* connectionHandler(void *args) {
 			memcpy((void*) buffer, (void*) &(data.temperature), 4);
 			memcpy((void*) (buffer + 4), (void*) &(data.humidity), 4);
 			
-			if(send(incomingSocket, buffer, 8, 0) != 8)
-				printf("Send error\n");
+			send(incomingSocket, buffer, 8, 0);
 		}
 	}
 	
@@ -113,9 +105,4 @@ void joinServer() {
 	pthread_cancel(serverThread);
 	close(serverSocket);
 	close(incomingSocket);
-}
-
-void testSocket() {
-	char test = 'Y';
-	send(clientSocket, &test, 1, 0);
 }

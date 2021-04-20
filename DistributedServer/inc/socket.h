@@ -4,14 +4,14 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <arpa/inet.h>
+
 #include <unistd.h>
 #include <string.h>
 #include <pthread.h>
 #include <stdlib.h>
+
 #include "io.h"
 #include "i2c.h"
-
-#include <stdio.h>
 
 #define SERVER_IP "192.168.0.53"
 #define SERVER_PORT 10030

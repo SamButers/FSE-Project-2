@@ -64,10 +64,6 @@ void gracefullyStop(int sig) {
 	exit(0);
 }
 
-/**
-Server will handle BME data sending and outpin setting.
-Client will send pin updates.
-**/
 int main() {
 	signal(SIGINT, gracefullyStop);
 	
