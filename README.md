@@ -53,4 +53,6 @@ Não há uma interface como no servidor central. <br>
 Para encerrar a execução, utiliza CTRL + C. <br>
 
 ## Outros
-Existe um timeout para a conexão entre os servidores, sendo feitas cinco tentativas de conexão com um intervalo de um segundo entre elas e, caso não consiga ser feito essa conexão (por exemplo, caso o outro servidor não tenha sido subido), o programa será encerrado.
+Existe um timeout para a conexão entre os servidores, sendo feitas cinco tentativas de conexão com um intervalo de um segundo entre elas e, caso não consiga ser feito essa conexão (por exemplo, caso o outro servidor não tenha sido subido), o programa será encerrado. <br>
+
+No socket.h é possível mudar o IP e a porta do servidor a qual o servidor o qual está executando irá se comunicar, como também a porta a qual irá escutar por conexões.
