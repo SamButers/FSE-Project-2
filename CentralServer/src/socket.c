@@ -56,8 +56,6 @@ int initServer() {
 }
 
 void* connectionHandler(void *args) {
-	printf("Handler initialized\n");
-	
 	int receivedBytes;
 	char buffer[8];
 	
@@ -65,10 +63,6 @@ void* connectionHandler(void *args) {
 	int value;
 	
 	while((receivedBytes = recv(incomingSocket, buffer, 8, 0)) > 0) {
-		if(receivedBytes == 3) {
-			printf("%s", buffer);
-			continue;
-		}
 		memcpy((void*) &pin, (void*) buffer, 4);
 		memcpy((void*) &value, (void*) (buffer + 4), 4);
 		

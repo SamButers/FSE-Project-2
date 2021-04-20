@@ -2,8 +2,8 @@
 #define CSV_H_
 
 #include <stdio.h>
-#include <time.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define ABERTURA_1 21 
 #define ABERTURA_2 22 

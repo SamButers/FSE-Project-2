@@ -3,8 +3,6 @@
 void generalInterruption(int pin) {
 	int pinValue = digitalRead(pin);
 	
-	printf("PIN %d: %d\n", pin, pinValue);
-	
 	if(pinValue)
 		sendPinUpdate(pin, 1);
 	else

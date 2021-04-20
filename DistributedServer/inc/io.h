@@ -4,7 +4,6 @@
 #include <wiringPi.h>
 #include <string.h>
 #include "interruptions.h"
-#include <stdio.h>
 
 #define INPUT_PINS_NUM 8
 #define OUTPUT_PINS_NUM 6
